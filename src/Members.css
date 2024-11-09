@@ -1,0 +1,16 @@
+.graph-container {
+  width: calc(100vh - 40px);
+  margin: 0 auto; /* Center the graph */
+}
+
+.like-button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
