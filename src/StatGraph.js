@@ -21,6 +21,7 @@ const StatGraph = memo(({ members }) => {
 
   useEffect(() => {
     const fetchStats = async () => {
+      console.log("fetchStats called")
       const today = new Date();
       const to = today.toISOString().split('T')[0];
 

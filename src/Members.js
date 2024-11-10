@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import StatGraph from './Stats';
+import StatGraph from './StatGraph';
 import './Members.css';
 
 
@@ -23,16 +23,12 @@ const MemberList = () => {
 
   useEffect(() => {
     const fetchMembers = async () => {
+      console.log("fetchMembers called")
       try {
         const response = await fetch('/api/members/get/all');
         if (response.ok) {
           const data = await response.json();
           setMembers(data);
-          const initialLikes = {};
-          data.forEach(member => {
-            initialLikes[member.id] = member.likes || 0;
-          });
-          setDbLikes(initialLikes);
         } else {
           console.error('Failed to fetch members');
         }
@@ -46,12 +42,47 @@ const MemberList = () => {
     fetchMembers();
   }, []);
 
+  useEffect(() => {
+    const fetchMemberLikes = async () => {
+      console.log("call fetchMemberLikes")
+      try {
+        const memberIds = members.map(member => member.id); // Extract member IDs
+        const response = await fetch('/api/members/like/count', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(memberIds), // Assuming 'members' is an array of member IDs
+        });
+
+  
+        if (!response.ok) {
+          throw new Error('Failed to fetch like counts');
+        }
+  
+        const data = await response.json();
+        // const initialLikes = {};
+        // data.forEach(memberLike => {
+        //   initialLikes[memberLike.memberId] = memberLike.count || 0;
+        // });
+        setDbLikes(data);
+        console.log(data); // Process like counts as needed
+      } catch (error) {
+        console.error('Error fetching like counts:', error);
+      }
+    };
+  
+    if (members && members.length > 0) {
+      fetchMemberLikes();
+    }
+  }, [members]);
+
   const syncLikesToDatabase = async (memberId, count) => {
     if (count < 1) return;
-    console.log(memberId, count);
+    console.log("syncLikesToDatabase")
 
     try {
-      const response = await fetch(`/api/members/${memberId}/like`, {
+      const response = await fetch(`/api/members/like/${memberId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
