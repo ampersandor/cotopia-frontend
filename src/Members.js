@@ -131,8 +131,31 @@ const MemberList = () => {
       setPending(true);
       // syncLikesToDatabase(memberId, (storageLikes[memberId] || 0) + 1);
     }
-
   };
+
+  const handleUpdateStats = async () => {
+    console.log("Updating stats for all members");
+
+    const memberIds = members.map(member => member.id);
+    try {
+      const response = await fetch('/api/stats/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(memberIds),
+      });
+
+      if (response.ok) {
+        console.log("Stats updated successfully");
+      } else {
+        console.error("Failed to update stats");
+      }
+    } catch (error) {
+      console.error("Error updating stats:", error);
+    }
+  };
+
 
   if (loading) {
     return <p> loading... </p>
@@ -140,6 +163,9 @@ const MemberList = () => {
   return (
     <div>
       <h2>Member List</h2>
+      <button onClick={handleUpdateStats} className="update-stats-button">
+        Update Stats
+      </button>
       {members.length > 0 && <div className="graph-container"><StatGraph members={memoizedMembers} /></div>}
       <ul>
         {members.map(member => (
