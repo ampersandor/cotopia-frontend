@@ -20,6 +20,20 @@ const MemberList = () => {
   useEffect(() => {
     localStorage.setItem("pending_likes", JSON.stringify(storageLikes));
   }, [storageLikes]);
+  
+  useEffect(() => {
+    const eventSource = new EventSource('/api/members/like/subscribe');
+    
+    eventSource.addEventListener('like-update', event => {
+      const likeCounts = JSON.parse(event.data);
+      setDbLikes(likeCounts);
+    });
+
+    // Cleanup on component unmount
+    return () => {
+      eventSource.close();
+    };
+  }, []); 
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -38,6 +52,7 @@ const MemberList = () => {
         setLoading(false);
       }
     };
+    
 
     fetchMembers();
   }, []);
