@@ -1,0 +1,118 @@
+.home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.hero-section {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border-radius: 15px;
+    margin-bottom: 40px;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    color: white;
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: white;
+    color: #6366f1;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+}
+
+.features-section, .stats-section {
+    padding: 40px 0;
+}
+
+.features-grid, .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.feature-card {
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 10px;
+}
+
+.stat-card h3 {
+    font-size: 2.5rem;
+    color: #6366f1;
+    margin-bottom: 10px;
+}
+
+h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #1e293b;
+}
+
+h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #334155;
+}
+
+p {
+    color: #64748b;
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        color: white;
+        font-size: 1.2rem;
+    }
+    
+    .features-grid, .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
