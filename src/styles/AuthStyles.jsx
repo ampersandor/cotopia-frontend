@@ -68,7 +68,7 @@ export const Title = styled.h2`
 export const LinkText = styled.p`
   text-align: right;
   margin-top: 1rem;
-  
+  color: #bbb;
   a {
     color: #007bff;
     text-decoration: none;

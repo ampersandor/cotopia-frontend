@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { signup } from '../api/auth';
 import {
     Container,
     Form,
@@ -12,6 +13,10 @@ import {
 } from '../styles/AuthStyles';
 
 const Signup = () => {
+    const navigate = useNavigate();
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -21,10 +26,18 @@ const Signup = () => {
 
     const onSubmit = async (data) => {
         try {
-            console.log(data);
-            // API 호출 로직 구현
+            setIsLoading(true);
+            setError('');
+            await signup({
+                username: data.username,
+                email: data.email,
+                password: data.password
+            });
+            navigate('/login'); // 회원가입 성공 시 로그인 페이지로 이동
         } catch (error) {
-            console.error('Signup error:', error);
+            setError(error.toString());
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -32,6 +45,8 @@ const Signup = () => {
         <Container>
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Title>회원가입</Title>
+
+                {error && <ErrorMessage>{error}</ErrorMessage>}
 
                 <Input
                     {...register("username", {
@@ -42,6 +57,7 @@ const Signup = () => {
                         }
                     })}
                     placeholder="사용자 이름"
+                    disabled={isLoading}
                 />
                 {errors.username && <ErrorMessage>{errors.username.message}</ErrorMessage>}
 
@@ -55,6 +71,7 @@ const Signup = () => {
                     })}
                     type="email"
                     placeholder="이메일"
+                    disabled={isLoading}
                 />
                 {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
 
@@ -68,6 +85,7 @@ const Signup = () => {
                     })}
                     type="password"
                     placeholder="비밀번호"
+                    disabled={isLoading}
                 />
                 {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
 
@@ -79,10 +97,13 @@ const Signup = () => {
                     })}
                     type="password"
                     placeholder="비밀번호 확인"
+                    disabled={isLoading}
                 />
                 {errors.passwordConfirm && <ErrorMessage>{errors.passwordConfirm.message}</ErrorMessage>}
 
-                <Button type="submit">가입하기</Button>
+                <Button type="submit" disabled={isLoading}>
+                    {isLoading ? '가입 중...' : '가입하기'}
+                </Button>
 
                 <LinkText>
                     이미 계정이 있으신가요? <Link to="/login">로그인</Link>
