@@ -32,7 +32,6 @@ const GraphContainer = styled.div`
 
 const StatsGraph = ({ stats }) => {
     const processedData = useMemo(() => {
-        // 플랫폼별로 데이터 그룹화
         const platformGroups = stats.reduce((acc, stat) => {
             if (!acc[stat.platform]) {
                 acc[stat.platform] = [];
@@ -41,9 +40,7 @@ const StatsGraph = ({ stats }) => {
             return acc;
         }, {});
 
-        // 각 플랫폼별 차트 데이터 생성
         return Object.entries(platformGroups).map(([platform, platformStats]) => {
-            // 날짜별로 그룹화
             const userGroups = platformStats.reduce((acc, stat) => {
                 if (!acc[stat.username]) {
                     acc[stat.username] = [];
@@ -52,10 +49,8 @@ const StatsGraph = ({ stats }) => {
                 return acc;
             }, {});
 
-            // 모든 날짜 추출 및 정렬
             const dates = [...new Set(platformStats.map(stat => stat.date))].sort();
 
-            // 각 사용자별 라인 데이터 생성
             const datasets = Object.entries(userGroups).map(([username, userStats]) => {
                 const color = `hsl(${Math.random() * 360}, 70%, 50%)`;
                 return {

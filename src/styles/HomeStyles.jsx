@@ -134,8 +134,8 @@ export const WelcomeBox = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 1200px;  // 최대 너비 설정
-    margin-left: auto;  // 가운데 정렬을 위한 마진
+    max-width: 1200px;
+    margin-left: auto;
     margin-right: auto;
 `;
 
