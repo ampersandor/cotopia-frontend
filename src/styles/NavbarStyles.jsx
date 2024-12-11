@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 export const Nav = styled.nav`
-  background-color: #f0f0f0;
+  background-color: #543A14;
   box-shadow: 0 2px 4px rgba(0,0,0,0.5);
   padding: 1rem 4rem;
   position: sticky;
@@ -21,8 +21,11 @@ export const NavContainer = styled.div`
 export const Logo = styled(Link)`
   font-size: 1.5rem;
   font-weight: bold;
-  color: #6366f1;
+  color: #FFF0DC;
   text-decoration: none;
+  &:hover {
+    color: #F0BB78;
+  }
 `;
 
 export const NavLinks = styled.div`
@@ -32,21 +35,21 @@ export const NavLinks = styled.div`
 `;
 
 export const NavLink = styled(Link)`
-  color: #1e293b;
+  color: #FFF0DC;
   text-decoration: none;
   font-weight: 500;
   font-size: 1.2rem;
   transition: color 0.2s;
 
   &:hover {
-    color: #6366f1;
+    color: #F0BB78;
   }
 `;
 
 export const NavButton = styled(Link)`
   padding: 0.5rem 1rem;
-  background-color: #6366f1;
-  color: white;
+  background-color: #F0BB78;
+  color: #444444;
   border-radius: 25px;
   text-decoration: none;
   font-weight: 500;
@@ -54,6 +57,7 @@ export const NavButton = styled(Link)`
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #4f46e5;
+    color: #444444;
+    background-color: #FFF0DC;
   }
 `;

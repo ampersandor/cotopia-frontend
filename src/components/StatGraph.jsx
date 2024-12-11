@@ -32,7 +32,7 @@ const StatGraph = memo(({ members }) => {
       try {
         const responses = await Promise.all(
           members.map(member =>
-            fetch(`/api/stats/get/${member.id}?from=${from}&to=${to}`)
+            fetch(`/api/v1/stats/team/${member.teamId}?from=${from}&to=${to}`)
           )
         );
         const dataPromises = responses.map(response => response.json());

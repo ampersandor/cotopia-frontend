@@ -28,7 +28,7 @@ const ErrorMessage = styled.div`
   margin-bottom: 1rem;
 `;
 
-const Algorithm = () => {
+const Algorithm = ({user}) => {
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -39,7 +39,7 @@ const Algorithm = () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await fetch('/api/members/get/all');
+            const response = await fetch(`/api/v1/members/team/${user.teamId}`);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
