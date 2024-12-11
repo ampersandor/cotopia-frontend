@@ -12,7 +12,7 @@ import {
     LinkText
 } from '../styles/AuthStyles';
 
-const Login = () => {
+const LoginPage = () => {
     const navigate = useNavigate();
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -79,4 +79,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default LoginPage;

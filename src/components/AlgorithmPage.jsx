@@ -28,34 +28,42 @@ const ErrorMessage = styled.div`
   margin-bottom: 1rem;
 `;
 
-const Algorithm = ({user}) => {
-    const [members, setMembers] = useState([]);
+const AlgorithmPage = ({user}) => {
+    const [stats, setStats] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const memoizedMembers = useMemo(() => members, [members]);
+    const memoizedStats = useMemo(() => stats, [stats]);
 
-    // 멤버 데이터 fetch
-    const fetchMembers = async () => {
+    const fetchStats = async () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await fetch(`/api/v1/members/team/${user.teamId}`);
+            const today = new Date().toISOString().split('T')[0];
+            const lastweek = new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0];
+            
+            let response;
+            if (user.teamId) {
+                response = await fetch(`/api/v1/stats/team/${user.teamId}?from=${lastweek}&to=${today}`);
+            } else {
+                response = await fetch(`/api/v1/stats/user/${user.id}?from=${lastweek}&to=${today}`);
+            }
+            console.log(response);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            setMembers(data);
+            setStats(data);
         } catch (error) {
-            setError('Failed to load members. Please try again later.');
-            console.error('Error fetching members:', error);
+            setError('Failed to load stats. Please try again later.');
+            console.error('Error fetching stats:', error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchMembers();
+        fetchStats();
     }, []);
 
 
@@ -63,16 +71,16 @@ const Algorithm = ({user}) => {
 
     return (
         <Container>
-            <Title>Member List</Title>
+            <Title>코꿀</Title>
             {error && <ErrorMessage>{error}</ErrorMessage>}
 
-            {members.length > 0 && (
+            {stats.length > 0 && (
                 <div className="graph-container">
-                    <StatGraph members={memoizedMembers} />
+                    <StatGraph stats={memoizedStats} />
                 </div>
             )}
         </Container>
     );
 };
 
-export default Algorithm;
+export default AlgorithmPage;

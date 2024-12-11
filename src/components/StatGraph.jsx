@@ -1,77 +1,113 @@
-import React, { useEffect, useState, memo } from 'react';
+import React, { useMemo } from 'react';
+import styled from 'styled-components';
 import { Line } from 'react-chartjs-2';
-import Chart from 'chart.js/auto'; // Ensure Chart.js is imported
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+} from 'chart.js';
 
-function seededRandom(seed) {
-    let x = Math.sin(seed+48) * 10000;
-    return x - Math.floor(x);
-}
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
-function getRandomColor(seed) {
-    let red = Math.floor(seededRandom(seed) * 256);
-    let green = Math.floor(seededRandom(seed + 1) * 256);
-    let blue = Math.floor(seededRandom(seed + 2) * 256);
+const GraphContainer = styled.div`
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+`;
 
-    return `rgba(${red}, ${green}, ${blue}, 1)`;
-}
+const StatsGraph = ({ stats }) => {
+    const processedData = useMemo(() => {
+        // 플랫폼별로 데이터 그룹화
+        const platformGroups = stats.reduce((acc, stat) => {
+            if (!acc[stat.platform]) {
+                acc[stat.platform] = [];
+            }
+            acc[stat.platform].push(stat);
+            return acc;
+        }, {});
 
-const StatGraph = memo(({ members }) => {
-  console.log("rendering StatGraph")
-  const [chartData, setChartData] = useState(null);
+        // 각 플랫폼별 차트 데이터 생성
+        return Object.entries(platformGroups).map(([platform, platformStats]) => {
+            // 날짜별로 그룹화
+            const userGroups = platformStats.reduce((acc, stat) => {
+                if (!acc[stat.username]) {
+                    acc[stat.username] = [];
+                }
+                acc[stat.username].push(stat);
+                return acc;
+            }, {});
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      console.log("fetchStats called")
-      const today = new Date();
-      const to = today.toISOString().split('T')[0];
+            // 모든 날짜 추출 및 정렬
+            const dates = [...new Set(platformStats.map(stat => stat.date))].sort();
 
-      const weekBefore = new Date();
-      weekBefore.setDate(today.getDate() - 7);
-      const from = weekBefore.toISOString().split('T')[0];
+            // 각 사용자별 라인 데이터 생성
+            const datasets = Object.entries(userGroups).map(([username, userStats]) => {
+                const color = `hsl(${Math.random() * 360}, 70%, 50%)`;
+                return {
+                    label: username,
+                    data: dates.map(date => {
+                        const stat = userStats.find(s => s.date === date);
+                        return stat ? stat.problemsSolved : null;
+                    }),
+                    borderColor: color,
+                    backgroundColor: color,
+                    tension: 0.4
+                };
+            });
 
-      try {
-        const responses = await Promise.all(
-          members.map(member =>
-            fetch(`/api/v1/stats/team/${member.teamId}?from=${from}&to=${to}`)
-          )
-        );
-        const dataPromises = responses.map(response => response.json());
-
-        const dataArray = await Promise.all(dataPromises);
-
-        // Check if dataArray is an array and transform for chart.js format
-        const labels = [...new Set(dataArray.flatMap(data => data.map(stat => stat.date)))];
-        labels.sort((a, b) => new Date(a) - new Date(b));
-        const datasets = members.map((member, index) => {
-          const values = labels.map(label => {
-            const stat = dataArray[index].find(stat => stat.date === label);
-            return stat ? stat.totalSolved : 0; // Handle missing stats
-          });
-          return {
-            label: `${member.name}`, // You can customize this label
-            data: values,
-            borderColor: `${getRandomColor(index)}`, // Different colors for each member
-            backgroundColor: `${getRandomColor(index)}`,
-          };
+            return {
+                platform,
+                data: {
+                    labels: dates,
+                    datasets
+                }
+            };
         });
+    }, [stats]);
 
-        setChartData({
-          labels,
-          datasets,
-        });
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-      }
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Problem Solving Progress'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
     };
 
-    if (members.length > 0) {
-      fetchStats();
-    }
-  }, [members]);
+    return (
+        <>
+            {processedData.map(({ platform, data }) => (
+                <GraphContainer key={platform}>
+                    <h2>{platform.toUpperCase()}</h2>
+                    <Line options={options} data={data} />
+                </GraphContainer>
+            ))}
+        </>
+    );
+};
 
-  if (!chartData) return <p>Loading...</p>;
-
-  return <Line data={chartData} />;
-});
-
-export default StatGraph;
+export default StatsGraph;

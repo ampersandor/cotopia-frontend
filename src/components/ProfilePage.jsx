@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 
-const MyPage = () => {
+const ProfilePage = () => {
     const [user, setUser] = useState({
         username: '',
         email: '',
@@ -152,4 +152,4 @@ const AccountLink = styled.a`
     }
 `;
 
-export default MyPage; 
+export default ProfilePage; 

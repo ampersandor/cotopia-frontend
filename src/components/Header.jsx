@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import {
     Nav,
     NavContainer,
@@ -8,33 +8,16 @@ import {
     NavButton
 } from '../styles/NavbarStyles';
 import { logout } from '../api/auth';
-import axios from 'axios';
+import { UserContext } from '../App';
 
-const Navbar = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+const Header = () => {
+    const { isAuthenticated, setIsAuthenticated, setUser } = useContext(UserContext);
 
-    const checkAuth = async () => {
-        try {
-            const response = await axios.get('/api/v1/user/check');
-            setIsAuthenticated(response.data.valid);
-        } catch (error) {
-            console.error('Auth check failed:', error);
-            setIsAuthenticated(false);
-        }
+    const handleLogout = async () => {
+        await logout();
+        setIsAuthenticated(false);
+        setUser(null);
     };
-
-    useEffect(() => {
-        checkAuth();
-
-        const handleLogin = () => {
-            checkAuth();
-        };
-
-        window.addEventListener('login', handleLogin);
-        return () => {
-            window.removeEventListener('login', handleLogin);
-        };
-    }, []);
 
     return (
         <Nav>
@@ -46,8 +29,8 @@ const Navbar = () => {
                             <NavLink to="/algorithm">Algorithm</NavLink>
                             <NavLink to="/lunchbattle">Lunch Battle</NavLink>
                             <NavLink to="/teams">Teams</NavLink>
-                            <NavLink to="/mypage">My Page</NavLink>
-                            <NavButton onClick={logout}>Logout</NavButton>
+                            <NavLink to="/profile">My Page</NavLink>
+                            <NavButton onClick={handleLogout}>Logout</NavButton>
                         </>
                     ) : (
                         <>
@@ -61,4 +44,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default Header;

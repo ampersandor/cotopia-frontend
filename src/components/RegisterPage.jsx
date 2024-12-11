@@ -12,7 +12,7 @@ import {
     LinkText
 } from '../styles/AuthStyles';
 
-const Signup = () => {
+const RegisterPage = () => {
     const navigate = useNavigate();
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -113,4 +113,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default RegisterPage;
