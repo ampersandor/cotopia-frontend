@@ -1,174 +1,270 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import styled from 'styled-components';
-import QuickNavigation from './QuickNavigation';
+import TeamSummary from './TeamSummary';
+import { UserContext } from '../App';
 
-const TeamPage = () => {
-    return (
-        <PageContainer>
-            <TeamSection>
-                <TeamName>Team Name</TeamName>
-                <MembersList>
-                    <MemberItem>Member 1</MemberItem>
-                    <MemberItem>Member 2</MemberItem>
-                    <MemberItem>Member 3</MemberItem>
-                </MembersList>
-            </TeamSection>
-
-            <QuestionSection>
-                <SectionTitle>오늘의 추천 문제</SectionTitle>
-                <QuestionCard>
-                    <QuestionTitle>
-                        Two Sum
-                        <QuestionLink href="https://leetcode.com/problems/two-sum/description/" target="_blank">
-                            문제 풀기
-                        </QuestionLink>
-                    </QuestionTitle>
-                </QuestionCard>
-            </QuestionSection>
-        
-            <QuickNavigation />
-        </PageContainer>
-    );
-};
-
-const PageContainer = styled.div`
+const Container = styled.div`
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
-    background: linear-gradient(135deg, #F1cc89 0%, #F0BB78 100%);
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
-const NoTeamContainer = styled.div`
-    text-align: center;
-    padding: 4rem 2rem;
-    background: #f8f9fa;
-    border-radius: 12px;
-    max-width: 600px;
-    margin: 2rem auto;
-`;
-
-const NoTeamTitle = styled.h2`
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 1rem;
-`;
-
-const NoTeamText = styled.p`
-    font-size: 1.1rem;
-    color: #666;
+const TeamHeader = styled.div`
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
     margin-bottom: 2rem;
-`;
-
-const FindTeamButton = styled.button`
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-        background: #0056b3;
-    }
-`;
-
-const TeamSection = styled.section`
-    margin-bottom: 2rem;
-    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const TeamName = styled.h1`
+    color: #131010;
+    margin-bottom: 1rem;
     font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 1rem;
 `;
 
-const MembersList = styled.ul`
-    list-style: none;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
+const TeamDescription = styled.p`
+    color: grey;
+    font-size: 1.1rem;
+    line-height: 1.6;
 `;
 
-const MemberItem = styled.li`
-    font-size: 1.2rem;
-    color: #666;
+const MembersSection = styled.div`
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
+
+    h2 {
+        color: #131010;
+    }
 `;
 
-const QuestionSection = styled.section`
-    margin-bottom: 2rem;
+const MembersGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
 `;
 
-const SectionTitle = styled.h2`
-    font-size: 1.8rem;
-    color: #333;
-    margin-bottom: 1rem;
-`;
-
-const QuestionCard = styled.div`
-    background: #f5f5f5;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const QuestionTitle = styled.h3`
-    font-size: 1.4rem;
-    color: #333;
-    margin-bottom: 0.5rem;
+const MemberCard = styled.div`
+    background: #FFF0DC;
+    border-radius: 10px;
+    padding: 1rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-`;
-
-const QuestionLink = styled.a`
-    color: #007bff;
-    text-decoration: none;
-    font-size: 1rem;
-    &:hover {
-        text-decoration: underline;
-    }
-`;
-
-const ButtonSection = styled.div`
-    display: flex;
-    gap: 1.5rem;
-    margin-top: 2rem;
     justify-content: center;
 `;
 
-const NavigateButton = styled.button`
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    background: transparent;
-    color: #007bff;
-    border: 2px solid #007bff;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+const MemberInfo = styled.div`
+    width: 100%;
+    text-align: center;
     
-    &:hover {
-        color: white;
-        background: #007bff;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
-    }
-
-    &:active {
-        transform: translateY(0);
-        box-shadow: none;
+    h3 {
+        color: #131010;
+        margin: 0;
+        font-size: 1rem;
     }
 `;
 
+const LeaveButton = styled.button`
+    background-color: #fff;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: auto;
+    display: block;
 
+    &:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+`;
+
+const ButtonContainer = styled.div`
+    display: flex;
+    gap: 1rem;
+    margin-left: auto;
+`;
+
+const DeleteButton = styled.button`
+    background-color: #fff;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+`;
+
+const NoCodingAccountSection = styled.div`
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 1rem 0;
+    text-align: center;
+    border: 2px dashed #dee2e6;
+
+    h3 {
+        color: #131010;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        color: #131010;
+        margin-bottom: 1rem;
+    }
+`;
+
+const CreateAccountButton = styled.button`
+    background-color: #F0BB78;
+    color: #131010;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: #e5a55d;
+    }
+`;
+
+const GraphTitle = styled.h2`
+    color: #131010;
+    margin-bottom: 1rem;
+`;
+
+const TeamPage = () => {
+    const { teamId } = useParams();
+    const navigate = useNavigate();
+    const [team, setTeam] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const { user } = useContext(UserContext);
+
+    useEffect(() => {
+        const fetchTeamDetails = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get(`/api/v1/teams/${teamId}`);
+                setTeam(response.data);
+            } catch (error) {
+                setError('Failed to fetch team details');
+                console.error('Error fetching team:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTeamDetails();
+    }, [teamId]);
+
+    const handleLeaveTeam = async () => {
+        if (window.confirm('Are you sure you want to leave this team?')) {
+            try {
+                await axios.post(`/api/v1/teams/${teamId}/leave`);
+                navigate('/teams');
+            } catch (error) {
+                console.error('Error leaving team:', error);
+                alert('Failed to leave team');
+            }
+        }
+    };
+
+    const handleDeleteTeam = async () => {
+        if (window.confirm('Are you sure you want to delete this team? This action cannot be undone.')) {
+            try {
+                await axios.delete(`/api/v1/teams/${teamId}`);
+                navigate('/teams');
+            } catch (error) {
+                console.error('Error deleting team:', error);
+                alert('Failed to delete team');
+            }
+        }
+    };
+
+    const handleCreateAccount = () => {
+        navigate('/profile');
+    };
+
+    if (loading) return (
+        <Container>
+            <div>Loading...</div>
+        </Container>
+    );
+    
+    if (error) return (
+        <Container>
+            <div>{error}</div>
+        </Container>
+    );
+    
+    if (!team) return (
+        <Container>
+            <div>Team not found</div>
+        </Container>
+    );
+
+    return (
+        <Container>
+            <TeamHeader>
+                <TeamName>{team.name}</TeamName>
+                <TeamDescription>
+                    Since {new Date(team.createdAt).toLocaleDateString()}
+                </TeamDescription>
+                <ButtonContainer>
+                    <LeaveButton onClick={handleLeaveTeam}>
+                        Leave Team
+                    </LeaveButton>
+                    {team.leaderId === user?.id && (
+                        <DeleteButton onClick={handleDeleteTeam}>
+                            Delete Team
+                        </DeleteButton>
+                    )}
+                </ButtonContainer>
+            </TeamHeader>
+
+            {(!user?.codingAccounts || user.codingAccounts.length === 0) && (
+                <NoCodingAccountSection>
+                    <h3>코딩 계정을 연동하고 팀원들과 함께 성장하세요!</h3>
+                    <p>백준, 프로그래머스 등의 계정을 연동하면 팀원들과 함께 문제 풀이 현황을 공유할 수 있습니다.</p>
+                    <CreateAccountButton onClick={handleCreateAccount}>
+                        코딩 계정 연동하기
+                    </CreateAccountButton>
+                </NoCodingAccountSection>
+            )}
+
+            <MembersSection>
+                <h2>Team Members</h2>
+                <MembersGrid>
+                    {team.members?.map(member => (
+                        <MemberCard key={member.id}>
+                            <MemberInfo>
+                                <h3>{member.username}</h3>
+                            </MemberInfo>
+                        </MemberCard>
+                    ))}
+                </MembersGrid>
+            </MembersSection>
+
+            <TeamSummary teamId={teamId} />
+        </Container>
+    );
+};
 
 export default TeamPage;

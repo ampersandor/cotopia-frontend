@@ -10,8 +10,8 @@ import {
 import { logout } from '../api/auth';
 import { UserContext } from '../App';
 
-const Header = () => {
-    const { isAuthenticated, setIsAuthenticated, setUser } = useContext(UserContext);
+const NavigationBar = () => {
+    const { isAuthenticated, setIsAuthenticated, setUser, user } = useContext(UserContext);
 
     const handleLogout = async () => {
         await logout();
@@ -26,8 +26,7 @@ const Header = () => {
                 <NavLinks>
                     {isAuthenticated ? (
                         <>
-                            <NavLink to="/algorithm">Algorithm</NavLink>
-                            <NavLink to="/lunchbattle">Lunch Battle</NavLink>
+                            <NavLink to={user?.teamId ? `/teams/${user.teamId}` : '/teams'}>My Team</NavLink>
                             <NavLink to="/teams">Teams</NavLink>
                             <NavLink to="/profile">My Page</NavLink>
                             <NavButton onClick={handleLogout}>Logout</NavButton>
@@ -44,4 +43,4 @@ const Header = () => {
     );
 };
 
-export default Header;
+export default NavigationBar;

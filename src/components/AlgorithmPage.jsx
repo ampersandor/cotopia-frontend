@@ -1,6 +1,8 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import StatGraph from './StatGraph';
 import styled from 'styled-components';
+import { UserContext } from '../App';
 
 // Styled Components
 const Container = styled.div`
@@ -28,7 +30,8 @@ const ErrorMessage = styled.div`
   margin-bottom: 1rem;
 `;
 
-const AlgorithmPage = ({user}) => {
+const AlgorithmPage = () => {
+    const { teamId } = useParams();
     const [stats, setStats] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -41,13 +44,7 @@ const AlgorithmPage = ({user}) => {
             const today = new Date().toISOString().split('T')[0];
             const lastweek = new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0];
             
-            let response;
-            if (user.teamId) {
-                response = await fetch(`/api/v1/stats/team/${user.teamId}?from=${lastweek}&to=${today}`);
-            } else {
-                response = await fetch(`/api/v1/stats/user/${user.id}?from=${lastweek}&to=${today}`);
-            }
-            console.log(response);
+            const response = await fetch(`/api/v1/stats/team/${teamId}?from=${lastweek}&to=${today}`);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

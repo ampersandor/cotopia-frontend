@@ -19,7 +19,7 @@ const LandingSection = () => {
             <HeroSection>
                 <h1>Welcome to Cotopia</h1>
                 <Subtitle>A vibrant community for developers</Subtitle>
-                <CTAButton to="/signup">Join Us</CTAButton>
+                <CTAButton to="/register">Join Us</CTAButton>
             </HeroSection>
             <Section>
                 <SectionTitle>Why Choose Cotopia?</SectionTitle>

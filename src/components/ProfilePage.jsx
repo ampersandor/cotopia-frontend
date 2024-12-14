@@ -1,28 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
+import { UserContext } from '../App';
 import axios from 'axios';
 
+
 const ProfilePage = () => {
-    const [user, setUser] = useState({
-        username: '',
-        email: '',
-        teamId: null,
-        role: '',
-        codingAccounts: []
+    const { user, setUser } = useContext(UserContext);
+    const [showForm, setShowForm] = useState(false);
+    const [newAccount, setNewAccount] = useState({
+        platform: 'baekjoon',
+        platformId: '',
+        url: ''
     });
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get('/api/v1/user/profile');
-                setUser(response.data);
-            } catch (error) {
-                console.error('Failed to fetch user data:', error);
-            }
-        };
+    const generateUrl = (platform, id) => {
+        switch (platform) {
+            case 'baekjoon':
+                return `https://www.acmicpc.net/user/${id}`;
+            case 'programmers':
+                return `https://programmers.co.kr/pr/${id}`;
+            case 'leetcode':
+                return `https://leetcode.com/${id}`;
+            default:
+                return '';
+        }
+    };
 
-        fetchUserData();
-    }, []);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const url = generateUrl(newAccount.platform, newAccount.platformId);
+        try {
+            const accountData = {
+                ...newAccount,
+                url: url
+            };
+            const response = await axios.post('/api/v1/coding-accounts', accountData);
+            setUser({
+                ...user,
+                codingAccounts: [...user.codingAccounts, response.data]
+            });
+            setShowForm(false);
+            setNewAccount({ platform: 'baekjoon', platformId: '', url: '' });
+        } catch (error) {
+            console.error('Error adding coding account:', error);
+            alert('Failed to add coding account');
+        }
+    };
+
+    const handleDelete = async (accountId) => {
+        if (window.confirm('이 계정을 삭제하시겠습니까?')) {
+            try {
+                await axios.delete(`/api/v1/coding-accounts/${accountId}`);
+                setUser({
+                    ...user,
+                    codingAccounts: user.codingAccounts.filter(account => account.id !== accountId)
+                });
+            } catch (error) {
+                console.error('Error deleting coding account:', error);
+                alert('Failed to delete coding account');
+            }
+        }
+    };
 
     return (
         <PageContainer>
@@ -53,17 +91,60 @@ const ProfilePage = () => {
                 </InfoSection>
 
                 <InfoSection>
-                    <InfoTitle>코딩 계정</InfoTitle>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <InfoTitle>코딩 계정</InfoTitle>
+                        <AddAccountButton onClick={() => setShowForm(!showForm)}>
+                            {showForm ? '취소' : '계정 추가'}
+                        </AddAccountButton>
+                    </div>
+
+                    {showForm && (
+                        <AccountForm onSubmit={handleSubmit}>
+                            <FormGroup>
+                                <Select
+                                    value={newAccount.platform}
+                                    onChange={(e) => setNewAccount({
+                                        ...newAccount,
+                                        platform: e.target.value
+                                    })}
+                                >
+                                    <option value="baekjoon">백준</option>
+                                    <option value="programmers">프로그래머스</option>
+                                    <option value="leetcode">LeetCode</option>
+                                </Select>
+                                <Input
+                                    type="text"
+                                    placeholder="계정 ID를 입력하세요"
+                                    value={newAccount.platformId}
+                                    onChange={(e) => setNewAccount({
+                                        ...newAccount,
+                                        platformId: e.target.value
+                                    })}
+                                    required
+                                />
+                                <SubmitButton type="submit">추가</SubmitButton>
+                            </FormGroup>
+                        </AccountForm>
+                    )}
+
                     <InfoGrid>
                         {user.codingAccounts.map((account, index) => (
-                            <InfoItem key={index}>
-                                <InfoLabel>{account.platform}</InfoLabel>
-                                <InfoValue>
-                                    <AccountLink href={account.url} target="_blank">
-                                        {account.platformId}
-                                    </AccountLink>
-                                </InfoValue>
-                            </InfoItem>
+                            <AccountItem key={index}>
+                                <AccountContent>
+                                    <InfoLabel>{account.platform}</InfoLabel>
+                                    <InfoValue>
+                                        <AccountLink href={account.url} target="_blank">
+                                            {account.platformId}
+                                        </AccountLink>
+                                    </InfoValue>
+                                </AccountContent>
+                                <DeleteButton 
+                                    onClick={() => handleDelete(account.id)}
+                                    title="Delete account"
+                                >
+                                    x
+                                </DeleteButton>
+                            </AccountItem>
                         ))}
                     </InfoGrid>
                 </InfoSection>
@@ -122,8 +203,9 @@ const InfoTitle = styled.h2`
 
 const InfoGrid = styled.div`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, 300px);
     gap: 1.5rem;
+    justify-content: start;
 `;
 
 const InfoItem = styled.div`
@@ -149,6 +231,100 @@ const AccountLink = styled.a`
     text-decoration: none;
     &:hover {
         text-decoration: underline;
+    }
+`;
+
+
+const AddAccountButton = styled.button`
+    background-color: #F0BB78;
+    color: #131010;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-left: 1rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: #e5a55d;
+    }
+`;
+
+const AccountForm = styled.form`
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: grid;
+    gap: 1rem;
+`;
+
+const FormGroup = styled.div`
+    display: flex;
+    gap: 1rem;
+`;
+
+const Select = styled.select`
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 1;
+`;
+
+const Input = styled.input`
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 2;
+`;
+
+const SubmitButton = styled.button`
+    background-color: #F0BB78;
+    color: #131010;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: #e5a55d;
+    }
+`;
+
+const DeleteButton = styled.button`
+    background: red;
+    border: solid 1px red;
+    color: white;
+    cursor: pointer;
+    padding: 0rem 0.3rem;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    margin-left: auto;
+    line-height: 1;
+    border-radius: 100%;
+    &:hover {
+        color: #bd2130;
+    }
+`;
+
+const AccountItem = styled(InfoItem)`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 300px;
+    box-sizing: border-box;
+`;
+
+const AccountContent = styled.div`
+    flex: 1;
+    overflow: hidden;
+    
+    ${InfoValue} {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 `;
 

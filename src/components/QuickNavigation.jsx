@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { UserContext } from '../App';
 
 const NavContainer = styled.div`
     max-width: 600px;
@@ -36,12 +37,12 @@ const Label = styled.div`
     color: #495057;
 `;
 
-const QuickNavigation = () => {
+const QuickNavigation = ({teamId}) => {
     const navigate = useNavigate();
 
     return (
         <NavContainer>
-            <NavButton onClick={() => navigate('/algorithm')}>
+            <NavButton onClick={() => navigate(`/teams/${teamId}/algorithm`)}>
                 <Icon>📊</Icon>
                 <Label>Algorithm</Label>
             </NavButton>

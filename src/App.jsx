@@ -2,7 +2,7 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import HomePage from './components/HomePage';
-import Header from './components/Header';
+import NavigationBar from './components/NavigationBar';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import TeamsPage from './components/TeamsPage';
@@ -10,6 +10,8 @@ import AlgorithmPage from './components/AlgorithmPage';
 import LunchBattlePage from './components/LunchBattlePage';
 import ProfilePage from './components/ProfilePage';
 import GlobalStyles from './styles/GlobalStyles';
+import { checkAuth } from './api/auth';
+import TeamPage from './components/TeamPage';
 export const UserContext = createContext();
 
 const ProtectedRoute = ({ children }) => {
@@ -42,13 +44,15 @@ function App() {
             setCurrentTime(new Date());
         }, 1000);
 
-        const checkAuth = async () => {
+        const getProfile = async () => {
             try {
-                const response = await axios.get('/api/v1/user/check');
-                setIsAuthenticated(response.data.valid);
-                if (response.data.valid) {
-                    const userResponse = await axios.get('/api/v1/user/profile');
+                const response = await checkAuth();
+                setIsAuthenticated(response);
+                console.log(response);
+                if (response) {
+                    const userResponse = await axios.get('/api/v1/users/me');
                     setUser(userResponse.data);
+                    console.log(userResponse.data);
                 }
             } catch (error) {
                 console.error('Auth check failed:', error);
@@ -57,10 +61,10 @@ function App() {
             }
         };
 
-        checkAuth();
+        getProfile();
 
         const handleLogin = () => {
-            checkAuth();
+            getProfile();
         };
 
         window.addEventListener('login', handleLogin);
@@ -75,7 +79,7 @@ function App() {
         <UserContext.Provider value={{ user, isAuthenticated, currentTime, setUser, setIsAuthenticated }}>
             <Router>
                 <GlobalStyles />
-                <Header />
+                <NavigationBar />
                 <Routes>
                     {/* 공개 라우트 */}
                     <Route path="/" element={<HomePage />} />
@@ -106,10 +110,10 @@ function App() {
                         } 
                     />
                     <Route 
-                        path="/algorithm" 
+                        path="/teams/:teamId/algorithm" 
                         element={
                             <ProtectedRoute>
-                                <AlgorithmPage user={user}/>
+                                <AlgorithmPage  />
                             </ProtectedRoute>
                         } 
                     />
@@ -129,6 +133,7 @@ function App() {
                             </ProtectedRoute>
                         } 
                     />
+                    <Route path="/teams/:teamId" element={<TeamPage />} />
                 </Routes>
             </Router>
         </UserContext.Provider>
