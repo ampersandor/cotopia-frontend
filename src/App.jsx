@@ -9,9 +9,11 @@ import TeamsPage from './components/TeamsPage';
 import AlgorithmPage from './components/AlgorithmPage';
 import LunchBattlePage from './components/LunchBattlePage';
 import ProfilePage from './components/ProfilePage';
-import GlobalStyles from './styles/GlobalStyles';
 import { checkAuth } from './api/auth';
 import TeamPage from './components/TeamPage';
+import { ThemeProvider } from 'styled-components';
+import { theme } from './styles/theme';
+import { GlobalStyle } from './styles/GlobalStyles';
 export const UserContext = createContext();
 
 const ProtectedRoute = ({ children }) => {
@@ -76,67 +78,69 @@ function App() {
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, isAuthenticated, currentTime, setUser, setIsAuthenticated }}>
-            <Router>
-                <GlobalStyles />
-                <NavigationBar />
-                <Routes>
-                    {/* 공개 라우트 */}
-                    <Route path="/" element={<HomePage />} />
-                    <Route 
-                        path="/login" 
-                        element={
-                            <PublicRoute>
-                                <LoginPage />
-                            </PublicRoute>
-                        } 
-                    />
-                    <Route 
-                        path="/register" 
-                        element={
-                            <PublicRoute>
-                                <RegisterPage />
-                            </PublicRoute>
-                        } 
-                    />
+        <ThemeProvider theme={theme}>
+            <GlobalStyle />
+            <UserContext.Provider value={{ user, isAuthenticated, currentTime, setUser, setIsAuthenticated }}>
+                <Router>
+                    <NavigationBar />
+                    <Routes>
+                        {/* 공개 라우트 */}
+                        <Route path="/" element={<HomePage />} />
+                        <Route 
+                            path="/login" 
+                            element={
+                                <PublicRoute>
+                                    <LoginPage />
+                                </PublicRoute>
+                            } 
+                        />
+                        <Route 
+                            path="/register" 
+                            element={
+                                <PublicRoute>
+                                    <RegisterPage />
+                                </PublicRoute>
+                            } 
+                        />
 
-                    {/* 보호된 라우트 */}
-                    <Route 
-                        path="/teams" 
-                        element={
-                            <ProtectedRoute>
-                                <TeamsPage />
-                            </ProtectedRoute>
-                        } 
-                    />
-                    <Route 
-                        path="/teams/:teamId/algorithm" 
-                        element={
-                            <ProtectedRoute>
-                                <AlgorithmPage  />
-                            </ProtectedRoute>
-                        } 
-                    />
-                    <Route 
-                        path="/lunchbattle" 
-                        element={
-                            <ProtectedRoute>
-                                <LunchBattlePage />
-                            </ProtectedRoute>
-                        } 
-                    />
-                    <Route 
-                        path="/profile" 
-                        element={
-                            <ProtectedRoute>
-                                <ProfilePage />
-                            </ProtectedRoute>
-                        } 
-                    />
-                    <Route path="/teams/:teamId" element={<TeamPage />} />
-                </Routes>
-            </Router>
-        </UserContext.Provider>
+                        {/* 보호된 라우트 */}
+                        <Route 
+                            path="/teams" 
+                            element={
+                                <ProtectedRoute>
+                                    <TeamsPage />
+                                </ProtectedRoute>
+                            } 
+                        />
+                        <Route 
+                            path="/teams/:teamId/algorithm" 
+                            element={
+                                <ProtectedRoute>
+                                    <AlgorithmPage  />
+                                </ProtectedRoute>
+                            } 
+                        />
+                        <Route 
+                            path="/teams/:teamId/lunchbattle" 
+                            element={
+                                <ProtectedRoute>
+                                    <LunchBattlePage />
+                                </ProtectedRoute>
+                            } 
+                        />
+                        <Route 
+                            path="/profile" 
+                            element={
+                                <ProtectedRoute>
+                                    <ProfilePage />
+                                </ProtectedRoute>
+                            } 
+                        />
+                        <Route path="/teams/:teamId" element={<TeamPage />} />
+                    </Routes>
+                </Router>
+            </UserContext.Provider>
+        </ThemeProvider>
     );
 }
 

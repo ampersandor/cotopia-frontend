@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const BannerContainer = styled.div`
-    background: #fff3e0;
+    background: ${props => props.theme.colors.background};
     border-radius: 15px;
     padding: 2rem;
     text-align: center;

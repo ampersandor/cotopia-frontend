@@ -12,26 +12,27 @@ const Container = styled.div`
 `;
 
 const Title = styled.h2`
-  color: #333;
+  color: ${props => props.theme.colors.text};
   margin-bottom: 1rem;
 `;
 
 const LoadingSpinner = styled.div`
   text-align: center;
   padding: 2rem;
-  color: #666;
+  color: ${props => props.theme.colors.text};
 `;
 
 const ErrorMessage = styled.div`
-  color: #dc2626;
+  color: ${props => props.theme.colors.error};
   padding: 1rem;
-  background: #fee2e2;
+  background: ${props => props.theme.colors.errorBackground};
   border-radius: 4px;
   margin-bottom: 1rem;
 `;
 
-const AlgorithmPage = () => {
-    const { teamId } = useParams();
+const AlgorithmPage = ({teamId: propTeamId}) => {
+    const { teamId: paramTeamId } = useParams();
+    const teamId = propTeamId || paramTeamId;
     const [stats, setStats] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

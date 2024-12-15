@@ -46,7 +46,7 @@ const QuickNavigation = ({teamId}) => {
                 <Icon>📊</Icon>
                 <Label>Algorithm</Label>
             </NavButton>
-            <NavButton onClick={() => navigate('/lunchbattle')}>
+            <NavButton onClick={() => navigate(`/teams/${teamId}/lunchbattle`)}>
                 <Icon>🍱</Icon>
                 <Label>Lunch Battle</Label>
             </NavButton>

@@ -155,7 +155,7 @@ const TeamPage = () => {
     const [team, setTeam] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { user } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
 
     useEffect(() => {
         const fetchTeamDetails = async () => {
@@ -178,6 +178,7 @@ const TeamPage = () => {
         if (window.confirm('Are you sure you want to leave this team?')) {
             try {
                 await axios.post(`/api/v1/teams/${teamId}/leave`);
+                setUser({ ...user, teamId: null });
                 navigate('/teams');
             } catch (error) {
                 console.error('Error leaving team:', error);

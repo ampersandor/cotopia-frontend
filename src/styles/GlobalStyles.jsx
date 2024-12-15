@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
-const GlobalStyles = createGlobalStyle`
+export const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
     padding: 0;
@@ -8,26 +8,59 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: #FFF0DC;
+    background-color: ${props => props.theme.colors.background};
+    color: ${props => props.theme.colors.text};
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    line-height: 1.5;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: ${props => props.theme.colors.text};
+    margin-bottom: 1rem;
   }
 
   a {
+    color: ${props => props.theme.colors.secondary};
     text-decoration: none;
-    color: inherit;
+    
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   button {
     cursor: pointer;
-  }
-
-  input, button {
     font-family: inherit;
   }
-`;
 
-export default GlobalStyles;
+  input, textarea, select {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border: 1px solid ${props => props.theme.colors.gray300};
+    border-radius: 4px;
+    
+    &:focus {
+      outline: none;
+      border-color: ${props => props.theme.colors.primary};
+    }
+  }
+
+  ::placeholder {
+    color: ${props => props.theme.colors.gray500};
+  }
+
+  // 스크롤바 스타일링
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: ${props => props.theme.colors.background};
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${props => props.theme.colors.primary};
+    border-radius: 4px;
+  }
+`;
