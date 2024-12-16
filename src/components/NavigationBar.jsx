@@ -26,7 +26,9 @@ const NavigationBar = () => {
                 <NavLinks>
                     {isAuthenticated ? (
                         <>
-                            <NavLink to={user?.teamId ? `/teams/${user.teamId}` : '/teams'}>My Team</NavLink>
+                            {user?.teamId && (
+                                <NavLink to={`/teams/${user.teamId}`}>My Team</NavLink>
+                            )}
                             <NavLink to="/teams">Teams</NavLink>
                             <NavLink to="/profile">My Page</NavLink>
                             <NavButton onClick={handleLogout}>Logout</NavButton>

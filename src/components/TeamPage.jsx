@@ -4,7 +4,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import TeamSummary from './TeamSummary';
 import { UserContext } from '../App';
-
+import QuickNavigation from './QuickNavigation';
 const Container = styled.div`
     padding: 2rem;
     max-width: 1200px;
@@ -17,6 +17,13 @@ const TeamHeader = styled.div`
     padding: 2rem;
     margin-bottom: 2rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const NavigationRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
 `;
 
 const TeamName = styled.h1`
@@ -149,6 +156,16 @@ const GraphTitle = styled.h2`
     margin-bottom: 1rem;
 `;
 
+const TeamHeaderTop = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+`;
+
+const TeamInfo = styled.div`
+    flex: 1;
+`;
+
 const TeamPage = () => {
     const { teamId } = useParams();
     const navigate = useNavigate();
@@ -224,21 +241,27 @@ const TeamPage = () => {
     return (
         <Container>
             <TeamHeader>
-                <TeamName>{team.name}</TeamName>
-                <TeamDescription>
-                    Since {new Date(team.createdAt).toLocaleDateString()}
-                </TeamDescription>
-                <ButtonContainer>
-                    <LeaveButton onClick={handleLeaveTeam}>
-                        Leave Team
-                    </LeaveButton>
-                    {team.leaderId === user?.id && (
-                        <DeleteButton onClick={handleDeleteTeam}>
-                            Delete Team
-                        </DeleteButton>
-                    )}
-                </ButtonContainer>
+                <TeamHeaderTop>
+                    <TeamInfo>
+                        <TeamName>{team.name}</TeamName>
+                        <TeamDescription>
+                            Since {new Date(team.createdAt).toLocaleDateString()}
+                        </TeamDescription>
+                    </TeamInfo>
+                    <ButtonContainer>
+                        <LeaveButton onClick={handleLeaveTeam}>
+                            Leave Team
+                        </LeaveButton>
+                        {team.leaderId === user?.id && (
+                            <DeleteButton onClick={handleDeleteTeam}>
+                                Delete Team
+                            </DeleteButton>
+                        )}
+                    </ButtonContainer>
+                </TeamHeaderTop>
+                <QuickNavigation teamId={teamId}/>
             </TeamHeader>
+
 
             {(!user?.codingAccounts || user.codingAccounts.length === 0) && (
                 <NoCodingAccountSection>
@@ -263,7 +286,6 @@ const TeamPage = () => {
                 </MembersGrid>
             </MembersSection>
 
-            <TeamSummary teamId={teamId} />
         </Container>
     );
 };
