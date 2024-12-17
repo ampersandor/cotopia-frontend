@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import StatGraph from './StatGraph';
 import styled from 'styled-components';
-import { UserContext } from '../App';
+import api from '../api/api';
 
 // Styled Components
 const Container = styled.div`
@@ -45,12 +45,8 @@ const AlgorithmPage = ({teamId: propTeamId}) => {
             const today = new Date().toISOString().split('T')[0];
             const lastweek = new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0];
             
-            const response = await fetch(`/api/v1/stats/team/${teamId}?from=${lastweek}&to=${today}`);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
+            const response = await api.get(`/api/v1/stats/team/${teamId}?from=${lastweek}&to=${today}`);
+            const data = response.data;
             setStats(data);
         } catch (error) {
             setError('Failed to load stats. Please try again later.');

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import axios from 'axios';
+import api from './api/api';
 import HomePage from './components/HomePage';
 import NavigationBar from './components/NavigationBar';
 import LoginPage from './components/LoginPage';
@@ -52,7 +52,7 @@ function App() {
                 setIsAuthenticated(response);
                 console.log(response);
                 if (response) {
-                    const userResponse = await axios.get('/api/v1/users/me');
+                    const userResponse = await api.get('/api/v1/users/me');
                     setUser(userResponse.data);
                     console.log(userResponse.data);
                 }
@@ -136,7 +136,7 @@ function App() {
                                 </ProtectedRoute>
                             } 
                         />
-                        <Route path="/teams/:teamId" element={<TeamPage />} />
+                        <Route path="/teams/:teamId" element={<ProtectedRoute> <TeamPage /> </ProtectedRoute>} />
                     </Routes>
                 </Router>
             </UserContext.Provider>

@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { UserContext } from '../App';
-import axios from 'axios';
+import api from '../api/api';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -24,7 +24,7 @@ const TeamSummary = ({teamId}) => {
         const fetchTeam = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`/api/v1/teams/${teamId}`);
+                const response = await api.get(`/api/v1/teams/${teamId}`);
                 setTeam(response.data);
                 console.log(response.data);
             } catch (error) {

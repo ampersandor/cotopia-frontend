@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../App';
 import styled from 'styled-components';
-import axios from 'axios';
+import api from '../api/api';
 import { FaTimes, FaUsers, FaUserPlus } from 'react-icons/fa';
 import teamIllustration from '../assets/team-illustration.svg';
 import { useNavigate } from 'react-router-dom';
@@ -239,7 +239,7 @@ const TeamsPage = () => {
     const fetchTeams = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('/api/v1/teams');
+            const response = await api.get('/api/v1/teams');
             setTeams(response.data);
         } catch (error) {
             setError('Failed to fetch teams');
@@ -254,7 +254,7 @@ const TeamsPage = () => {
         if (!teamName.trim() || user.teamId) return;
 
         try {
-            const response = await axios.post('/api/v1/teams', { name: teamName });
+            const response = await api.post('/api/v1/teams', { name: teamName });
             setUser({ ...user, teamId: response.data.id });
             setTeamName('');
             setIsModalOpen(false);
@@ -269,7 +269,7 @@ const TeamsPage = () => {
         if (user.teamId) return;
 
         try {
-            await axios.post(`/api/v1/teams/${teamId}/join`);
+            await api.post(`/api/v1/teams/${teamId}/join`);
             setUser({ ...user, teamId });
             setError(null);
             fetchTeams();

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { UserContext } from '../App';
-import axios from 'axios';
+import api from '../api/api';
 
 
 const ProfilePage = () => {
@@ -34,7 +34,7 @@ const ProfilePage = () => {
                 ...newAccount,
                 url: url
             };
-            const response = await axios.post('/api/v1/coding-accounts', accountData);
+            const response = await api.post('/api/v1/coding-accounts', accountData);
             setUser({
                 ...user,
                 codingAccounts: [...user.codingAccounts, response.data]
@@ -50,7 +50,7 @@ const ProfilePage = () => {
     const handleDelete = async (accountId) => {
         if (window.confirm('이 계정을 삭제하시겠습니까?')) {
             try {
-                await axios.delete(`/api/v1/coding-accounts/${accountId}`);
+                await api.delete(`/api/v1/coding-accounts/${accountId}`);
                 setUser({
                     ...user,
                     codingAccounts: user.codingAccounts.filter(account => account.id !== accountId)

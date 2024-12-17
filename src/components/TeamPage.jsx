@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/api';
 import styled from 'styled-components';
 import TeamSummary from './TeamSummary';
 import { UserContext } from '../App';
@@ -178,7 +178,7 @@ const TeamPage = () => {
         const fetchTeamDetails = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`/api/v1/teams/${teamId}`);
+                const response = await api.get(`/api/v1/teams/${teamId}`);
                 setTeam(response.data);
             } catch (error) {
                 setError('Failed to fetch team details');
@@ -194,7 +194,7 @@ const TeamPage = () => {
     const handleLeaveTeam = async () => {
         if (window.confirm('Are you sure you want to leave this team?')) {
             try {
-                await axios.post(`/api/v1/teams/${teamId}/leave`);
+                await api.post(`/api/v1/teams/${teamId}/leave`);
                 setUser({ ...user, teamId: null });
                 navigate('/teams');
             } catch (error) {
@@ -207,7 +207,7 @@ const TeamPage = () => {
     const handleDeleteTeam = async () => {
         if (window.confirm('Are you sure you want to delete this team? This action cannot be undone.')) {
             try {
-                await axios.delete(`/api/v1/teams/${teamId}`);
+                await api.delete(`/api/v1/teams/${teamId}`);
                 navigate('/teams');
             } catch (error) {
                 console.error('Error deleting team:', error);

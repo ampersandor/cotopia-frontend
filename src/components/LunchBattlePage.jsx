@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTheme } from 'styled-components';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import api from '../api/api';
 import { debounce } from 'lodash';
 import {
     Chart as ChartJS,
@@ -103,7 +104,8 @@ const LunchBattlePage = () => {
     const theme = useTheme();
 
     useEffect(() => {
-        const websocket = new WebSocket('ws://localhost:8080/ws');
+        const websocket = new WebSocket(import.meta.env.VITE_WS_URL);
+        console.log(import.meta.env.VITE_WS_URL)
 
         websocket.onopen = () => {
             console.log('WebSocket Connected');
@@ -204,10 +206,24 @@ const LunchBattlePage = () => {
     useEffect(() => {
         const fetchMenus = async () => {
             try {
-                const response = await fetch(`/api/v1/teams/${teamId}/foods`);
-                const data = await response.json();
+                const response = await api.get(`/api/v1/teams/${teamId}/foods`);
+                const data = response.data;
                 console.log(data);
                 setMenus(data);
+                
+                if (data.length > 0) {
+                    const maxVotes = Math.max(...data.map(menu => menu.likeCount));
+                    const winnersCount = data.filter(menu => menu.likeCount === maxVotes).length;
+                    
+                    if (winnersCount === 1) {
+                        const winningFood = data.find(menu => menu.likeCount === maxVotes);
+                        setWinner(winningFood);
+                    } else {
+                        setWinner({ name: '?' });
+                    }
+                } else {
+                    setWinner({ name: '?' });
+                }
             } catch (error) {
                 console.error('Error fetching menus:', error);
             }
