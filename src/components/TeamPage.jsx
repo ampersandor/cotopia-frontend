@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/api';
 import styled from 'styled-components';
-import TeamSummary from './TeamSummary';
 import { UserContext } from '../App';
 import QuickNavigation from './QuickNavigation';
 const Container = styled.div`

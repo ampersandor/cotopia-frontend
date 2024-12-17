@@ -1,34 +1,9 @@
-import React, { useEffect, useState, useMemo, useContext } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import StatGraph from './StatGraph';
-import styled from 'styled-components';
 import api from '../api/api';
+import { Container, Title, LoadingSpinner, ErrorMessage } from '../styles/AlgorithmPageStyles';
 
-// Styled Components
-const Container = styled.div`
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
-
-const Title = styled.h2`
-  color: ${props => props.theme.colors.text};
-  margin-bottom: 1rem;
-`;
-
-const LoadingSpinner = styled.div`
-  text-align: center;
-  padding: 2rem;
-  color: ${props => props.theme.colors.text};
-`;
-
-const ErrorMessage = styled.div`
-  color: ${props => props.theme.colors.error};
-  padding: 1rem;
-  background: ${props => props.theme.colors.errorBackground};
-  border-radius: 4px;
-  margin-bottom: 1rem;
-`;
 
 const AlgorithmPage = ({teamId: propTeamId}) => {
     const { teamId: paramTeamId } = useParams();

@@ -11,7 +11,7 @@ import {
     HeroSection,
     Subtitle,
     CTAButton
-} from '../styles/HomeStyles';
+} from '../styles/LandingSectionStyles';
 
 const LandingSection = () => {
     return (

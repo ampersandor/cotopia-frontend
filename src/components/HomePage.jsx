@@ -1,20 +1,14 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import api from '../api/api';
-import { HomeContainer } from '../styles/HomeStyles';
+import React, { useContext } from 'react';
 import LandingSection from './LandingSection';
 import DashboardSection from './DashboardSection';
 import NoTeamBanner from './NoTeamBanner';
 import WritingAnimation from './WritingAnimation';
 import { UserContext } from '../App';
-import AlgorithmPage from './AlgorithmPage';
 import TeamSummary from './TeamSummary';
+import { HomeContainer } from '../styles/HomeStyles';
 
 const HomePage = () => {
-    const { user, setUser, isAuthenticated, currentTime } = useContext(UserContext);
-    const navigate = useNavigate();
-
+    const { user, isAuthenticated, currentTime } = useContext(UserContext);
 
     return (
         <HomeContainer>
@@ -26,7 +20,6 @@ const HomePage = () => {
                     {user?.teamId ? (
                         <>
                             <TeamSummary teamId={user.teamId}/>
-
                         </>
                     ) : (
                         <NoTeamBanner />
