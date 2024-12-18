@@ -26,7 +26,9 @@ ChartJS.register(
 );
 
 import { Container, Title, MenuGrid, MenuButton, ClickCount, WinnerDisplay } from '../styles/LunchBattlePageStyles';
-const DEBOUNCE_RATE = 500; 
+const DEBOUNCE_RATE = 500;
+const MAX_RECONNECT_ATTEMPTS = 5;
+const RECONNECT_DELAY = 3000;
 
 const LunchBattlePage = () => {
     const { teamId } = useParams();
@@ -36,37 +38,44 @@ const LunchBattlePage = () => {
     const clickCountRef = useRef({});
     const [clickCounts, setClickCounts] = useState({});
     const theme = useTheme();
+    const [wsStatus, setWsStatus] = useState('disconnected');
+    const reconnectAttempts = useRef(0);
+    const reconnectTimeout = useRef(null);
 
-    useEffect(() => {
-        const websocket = new WebSocket(import.meta.env.VITE_WS_URL);
-        console.log(import.meta.env.VITE_WS_URL)
+    const connectWebSocket = useCallback(() => {
+        if (reconnectAttempts.current >= MAX_RECONNECT_ATTEMPTS) {
+            console.log('Max reconnection attempts reached');
+            setWsStatus('failed');
+            return;
+        }
 
+        const websocket = new WebSocket(`${import.meta.env.VITE_WS_URL}?teamId=${teamId}`);
+        
         websocket.onopen = () => {
             console.log('WebSocket Connected');
             setWs(websocket);
+            setWsStatus('connected');
+            reconnectAttempts.current = 0;
         };
 
         websocket.onmessage = (event) => {
             console.log('Received message:', event.data);
             try {
-                const data = JSON.parse(event.data);
-                setMenus((prevMenus) => {
-                    const updatedMenus = prevMenus.map(menu => {
-                        if (menu.id === data.foodId) {
-                            return {
-                                ...menu,
-                                likeCount: data.likeCount
-                            };
-                        }
-                        return menu;
+                const message = JSON.parse(event.data);
+                if (message.type === 'LIKE_UPDATE') {
+                    setMenus((prevMenus) => {
+                        const updatedMenus = prevMenus.map(menu => ({
+                            ...menu,
+                            likeCount: message.data[menu.id] || menu.likeCount
+                        }));
+
+                        const maxVotes = Math.max(...updatedMenus.map(menu => menu.likeCount));
+                        const winningFood = updatedMenus.find(menu => menu.likeCount === maxVotes);
+                        setWinner(winningFood);
+
+                        return updatedMenus;
                     });
-                    const maxVotes = Math.max(...updatedMenus.map(menu => menu.likeCount));
-                    const winningFood = updatedMenus.find(menu => 
-                        menu.likeCount === maxVotes
-                    );
-                    setWinner(winningFood);
-                    return updatedMenus;
-                });
+                }
             } catch (error) {
                 console.error('Error parsing message:', error);
             }
@@ -74,19 +83,34 @@ const LunchBattlePage = () => {
 
         websocket.onerror = (error) => {
             console.error('WebSocket error:', error);
+            setWsStatus('error');
         };
 
         websocket.onclose = (event) => {
             console.log('WebSocket closed:', event);
             setWs(null);
+            setWsStatus('disconnected');
+
+            // 자동 재연결 시도
+            reconnectAttempts.current += 1;
+            reconnectTimeout.current = setTimeout(() => {
+                connectWebSocket();
+            }, RECONNECT_DELAY);
         };
+    }, [teamId]);
+
+    useEffect(() => {
+        connectWebSocket();
 
         return () => {
-            if (websocket) {
-                websocket.close();
+            if (ws) {
+                ws.close();
+            }
+            if (reconnectTimeout.current) {
+                clearTimeout(reconnectTimeout.current);
             }
         };
-    }, []);
+    }, [connectWebSocket]);
 
     const handleVote = useCallback((foodId) => {
         if (ws && ws.readyState === WebSocket.OPEN) {
@@ -110,12 +134,16 @@ const LunchBattlePage = () => {
                     }));
                 } catch (error) {
                     console.error('Error sending vote:', error);
+                    if (ws.readyState !== WebSocket.OPEN) {
+                        connectWebSocket();
+                    }
                 }
             }
         } else {
-            console.warn('WebSocket not connected');
+            console.warn('WebSocket not connected, attempting to reconnect...');
+            connectWebSocket();
         }
-    }, [ws, teamId]);
+    }, [ws, teamId, connectWebSocket]);
 
     // 각 음식별로 디바운스된 핸들러 생성
     const debouncedHandlers = useRef({});
