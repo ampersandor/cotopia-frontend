@@ -8,6 +8,10 @@ const Container = styled.div`
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+
+    @media (max-width: 768px) {
+        padding: 1rem;
+    }
 `;
 
 const TeamHeader = styled.div`
@@ -85,8 +89,7 @@ const LeaveButton = styled.button`
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin-left: auto;
-    display: block;
+    white-space: nowrap;
 
     &:hover {
         background-color: #dc3545;
@@ -98,6 +101,17 @@ const ButtonContainer = styled.div`
     display: flex;
     gap: 1rem;
     margin-left: auto;
+
+    @media (max-width: 768px) {
+        margin-left: 0;
+        flex-wrap: wrap;
+        
+        button {
+            flex: 1;
+            min-width: 120px;
+            white-space: nowrap;
+        }
+    }
 `;
 
 const DeleteButton = styled.button`
@@ -109,6 +123,7 @@ const DeleteButton = styled.button`
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    white-space: nowrap;
 
     &:hover {
         background-color: #dc3545;
@@ -159,6 +174,12 @@ const TeamHeaderTop = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 1rem;
+    
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: stretch;
+    }
 `;
 
 const TeamInfo = styled.div`
