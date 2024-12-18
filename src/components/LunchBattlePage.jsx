@@ -66,7 +66,7 @@ const LunchBattlePage = () => {
                     setMenus((prevMenus) => {
                         const updatedMenus = prevMenus.map(menu => ({
                             ...menu,
-                            likeCount: message.data[menu.id] || menu.likeCount
+                            likeCount: message.updates[menu.id] || menu.likeCount
                         }));
 
                         const maxVotes = Math.max(...updatedMenus.map(menu => menu.likeCount));
@@ -91,7 +91,6 @@ const LunchBattlePage = () => {
             setWs(null);
             setWsStatus('disconnected');
 
-            // 자동 재연결 시도
             reconnectAttempts.current += 1;
             reconnectTimeout.current = setTimeout(() => {
                 connectWebSocket();
