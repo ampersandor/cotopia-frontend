@@ -207,6 +207,7 @@ const TeamPage = () => {
         if (window.confirm('Are you sure you want to delete this team? This action cannot be undone.')) {
             try {
                 await api.delete(`/api/v1/teams/${teamId}`);
+                setUser({ ...user, teamId: null });
                 navigate('/teams');
             } catch (error) {
                 console.error('Error deleting team:', error);

@@ -270,7 +270,7 @@ const TeamsPage = () => {
 
         try {
             await api.post(`/api/v1/teams/${teamId}/join`);
-            setUser({ ...user, teamId });
+            setUser({ ...user, teamId: teamId });
             setError(null);
             fetchTeams();
         } catch (error) {
