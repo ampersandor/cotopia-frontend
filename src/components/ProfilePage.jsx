@@ -203,9 +203,12 @@ const InfoTitle = styled.h2`
 
 const InfoGrid = styled.div`
     display: grid;
-    grid-template-columns: repeat(auto-fill, 300px);
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
-    justify-content: start;
+    
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
 `;
 
 const InfoItem = styled.div`
@@ -263,6 +266,10 @@ const AccountForm = styled.form`
 const FormGroup = styled.div`
     display: flex;
     gap: 1rem;
+    
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
 `;
 
 const Select = styled.select`
@@ -270,6 +277,11 @@ const Select = styled.select`
     border: 1px solid #ddd;
     border-radius: 4px;
     flex: 1;
+    min-width: 100px;
+    
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 const Input = styled.input`
@@ -277,6 +289,10 @@ const Input = styled.input`
     border: 1px solid #ddd;
     border-radius: 4px;
     flex: 2;
+    
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 const SubmitButton = styled.button`
@@ -287,6 +303,11 @@ const SubmitButton = styled.button`
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    white-space: nowrap;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 
     &:hover {
         background-color: #e5a55d;
@@ -313,7 +334,7 @@ const AccountItem = styled(InfoItem)`
     display: flex;
     align-items: center;
     gap: 1rem;
-    width: 300px;
+    width: 100%;
     box-sizing: border-box;
 `;
 

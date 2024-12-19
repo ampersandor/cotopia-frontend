@@ -53,4 +53,4 @@ const QuickNavigation = ({teamId}) => {
     );
 };
 
-export default QuickNavigation; 
+export default QuickNavigation;  

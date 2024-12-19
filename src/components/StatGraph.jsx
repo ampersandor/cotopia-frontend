@@ -28,6 +28,25 @@ const GraphContainer = styled.div`
     padding: 2rem;
     margin: 1rem 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    
+    @media (max-width: 768px) {
+        padding: 1rem;
+    }
+
+    h2 {
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+`;
+
+const ChartWrapper = styled.div`
+    position: relative;
+    height: 40vh;
+    width: 100%;
+    
+    @media (max-width: 768px) {
+        height: 50vh;
+    }
 `;
 
 const StatsGraph = ({ stats }) => {
@@ -77,9 +96,14 @@ const StatsGraph = ({ stats }) => {
 
     const options = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: 'top',
+                labels: {
+                    boxWidth: 20,
+                    padding: 10
+                }
             },
             title: {
                 display: true,
@@ -87,8 +111,11 @@ const StatsGraph = ({ stats }) => {
             }
         },
         scales: {
-            y: {
-                beginAtZero: true
+            x: {
+                ticks: {
+                    maxRotation: 45,
+                    minRotation: 45
+                }
             }
         }
     };
@@ -98,7 +125,9 @@ const StatsGraph = ({ stats }) => {
             {processedData.map(({ platform, data }) => (
                 <GraphContainer key={platform}>
                     <h2>{platform.toUpperCase()}</h2>
-                    <Line options={options} data={data} />
+                    <ChartWrapper>
+                        <Line options={options} data={data} />
+                    </ChartWrapper>
                 </GraphContainer>
             ))}
         </>
