@@ -224,8 +224,15 @@ const LunchBattlePage = () => {
             y: {
                 beginAtZero: true,
                 ticks: {
-                    stepSize: 1
+                    stepSize: 10,
+                    maxTicksLimit: 10
                 }
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
             }
         }
     };
