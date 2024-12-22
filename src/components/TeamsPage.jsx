@@ -312,7 +312,7 @@ const TeamsPage = () => {
                             )}
                         </TeamName>
                         <TeamMembers>
-                            {team.memberCount || 0} members
+                            {team.members.length || 0} members
                         </TeamMembers>
                         {!user.teamId && (
                             <JoinButton onClick={() => handleJoinTeam(team.id)}>

@@ -270,9 +270,11 @@ const TeamPage = () => {
                         </TeamDescription>
                     </TeamInfo>
                     <ButtonContainer>
-                        <LeaveButton onClick={handleLeaveTeam}>
-                            Leave Team
-                        </LeaveButton>
+                        {user?.teamId === team.id && (
+                            <LeaveButton onClick={handleLeaveTeam}>
+                                Leave Team
+                            </LeaveButton>
+                        )}
                         {team.leaderId === user?.id && (
                             <DeleteButton onClick={handleDeleteTeam}>
                                 Delete Team
