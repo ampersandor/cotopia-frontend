@@ -111,25 +111,25 @@ const LunchBattlePage = () => {
         };
     }, [connectWebSocket]);
 
-    const handleVote = useCallback((foodId) => {
+    const handleVote = useCallback((lunchId) => {
         if (ws && ws.readyState === WebSocket.OPEN) {
-            const currentCount = clickCountRef.current[foodId] || 0;
+            const currentCount = clickCountRef.current[lunchId] || 0;
             
             if (currentCount > 0) {
-                console.log(`Sending accumulated ${currentCount} votes for food:`, foodId);
+                console.log(`Sending accumulated ${currentCount} votes for food:`, lunchId);
                 
                 const message = {
                     teamId: Number(teamId),
-                    foodId: Number(foodId),
+                    lunchId: Number(lunchId),
                     likeCount: currentCount
                 };
                 
                 try {
                     ws.send(JSON.stringify(message));
-                    clickCountRef.current[foodId] = 0;
+                    clickCountRef.current[lunchId] = 0;
                     setClickCounts(prev => ({
                         ...prev,
-                        [foodId]: 0
+                        [lunchId]: 0
                     }));
                 } catch (error) {
                     console.error('Error sending vote:', error);
@@ -147,27 +147,27 @@ const LunchBattlePage = () => {
     // 각 음식별로 디바운스된 핸들러 생성
     const debouncedHandlers = useRef({});
 
-    const onFoodClick = (foodId) => {
-        clickCountRef.current[foodId] = (clickCountRef.current[foodId] || 0) + 1;
+    const onFoodClick = (lunchId) => {
+        clickCountRef.current[lunchId] = (clickCountRef.current[lunchId] || 0) + 1;
         setClickCounts(prev => ({
             ...prev,
-            [foodId]: (prev[foodId] || 0) + 1
+            [lunchId]: (prev[lunchId] || 0) + 1
         }));
 
         // 각 음식별로 디바운스된 핸들러 생성 및 호출
-        if (!debouncedHandlers.current[foodId]) {
-            debouncedHandlers.current[foodId] = debounce((id) => {
+        if (!debouncedHandlers.current[lunchId]) {
+            debouncedHandlers.current[lunchId] = debounce((id) => {
                 handleVote(id);
             }, DEBOUNCE_RATE);
         }
         
-        debouncedHandlers.current[foodId](foodId);
+        debouncedHandlers.current[lunchId](lunchId);
     };
 
     useEffect(() => {
         const fetchMenus = async () => {
             try {
-                const response = await api.get(`/api/v1/teams/${teamId}/foods`);
+                const response = await api.get(`/api/v1/teams/${teamId}/lunches`);
                 const data = response.data;
                 console.log(data);
                 setMenus(data);
