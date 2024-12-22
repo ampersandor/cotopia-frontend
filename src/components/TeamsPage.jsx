@@ -41,10 +41,10 @@ const TeamCard = styled.div`
     gap: 1rem;
     transition: transform 0.2s ease;
     border: ${props => props.$isMyTeam ? '2px solid #F0BB78' : 'none'};
-    cursor: pointer;
+    cursor: ${props => props.$isMyTeam ? 'pointer' : 'default'};
 
     &:hover {
-        transform: translateY(-5px);
+        transform: ${props => props.$isMyTeam ? 'translateY(-5px)' : 'none'};
     }
 `;
 
@@ -303,7 +303,7 @@ const TeamsPage = () => {
                     <TeamCard 
                         key={team.id} 
                         $isMyTeam={user.teamId === team.id}
-                        onClick={() => handleTeamClick(team.id)}
+                        onClick={user.teamId == team.id ? () => handleTeamClick(team.id) : undefined}
                     >
                         <TeamName>
                             {team.name}
