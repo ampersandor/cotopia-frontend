@@ -25,7 +25,7 @@ ChartJS.register(
     Legend
 );
 
-import { Container, Title, MenuGrid, MenuButton, ClickCount, WinnerDisplay } from '../styles/LunchBattlePageStyles';
+import { Container, Title, MenuGrid, MenuButton, ClickCount, WinnerDisplay, FoodImage, FoodName } from '../styles/LunchBattlePageStyles';
 const DEBOUNCE_RATE = 500;
 const MAX_RECONNECT_ATTEMPTS = 5;
 const RECONNECT_DELAY = 3000;
@@ -195,7 +195,7 @@ const LunchBattlePage = () => {
 
     // 차트 데이터
     const chartData = {
-        labels: menus.map(menu => menu.name),
+        labels: menus.map(menu => menu.foodName),
         datasets: [{
             label: '투표 수',
             data: menus.map(menu => menu.likeCount),
@@ -237,7 +237,11 @@ const LunchBattlePage = () => {
                         key={menu.id}
                         onClick={() => onFoodClick(menu.id)}
                     >
-                        {menu.name}
+                        <FoodImage 
+                            src={menu.foodImgSrc} 
+                            alt={menu.foodName}
+                        />
+                        <FoodName>{menu.foodName}</FoodName>
                         {clickCounts[menu.id] > 0 && (
                             <ClickCount>+{clickCounts[menu.id]}</ClickCount>
                         )}
