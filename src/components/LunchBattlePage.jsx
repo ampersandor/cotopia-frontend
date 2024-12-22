@@ -30,6 +30,13 @@ const DEBOUNCE_RATE = 500;
 const MAX_RECONNECT_ATTEMPTS = 5;
 const RECONNECT_DELAY = 3000;
 
+const getBarColor = (value, maxValue) => {
+    if (value === maxValue) return 'rgba(240, 187, 120, 1)';  // 1등은 진한 색상
+    if (value >= maxValue * 0.7) return 'rgba(240, 187, 120, 0.8)';  // 70% 이상
+    if (value >= maxValue * 0.4) return 'rgba(240, 187, 120, 0.6)';  // 40% 이상
+    return 'rgba(240, 187, 120, 0.4)';  // 나머지
+};
+
 const LunchBattlePage = () => {
     const { teamId } = useParams();
     const [menus, setMenus] = useState([]);
@@ -199,7 +206,9 @@ const LunchBattlePage = () => {
         datasets: [{
             label: '투표 수',
             data: menus.map(menu => menu.likeCount),
-            backgroundColor: theme.colors.primary,
+            backgroundColor: menus.map(menu => 
+                getBarColor(menu.likeCount, Math.max(...menus.map(m => m.likeCount)))
+            ),
             borderColor: theme.colors.secondary,
             borderWidth: 1
         }]
