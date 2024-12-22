@@ -243,7 +243,7 @@ const LunchBattlePage = () => {
             
             {winner && (
                 <WinnerDisplay>
-                    We'll Eat <span>{winner.name}</span>
+                    We'll Eat <span>{winner.foodName}</span>
                 </WinnerDisplay>
             )}
 
