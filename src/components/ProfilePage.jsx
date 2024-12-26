@@ -8,14 +8,14 @@ const ProfilePage = () => {
     const { user, setUser } = useContext(UserContext);
     const [showForm, setShowForm] = useState(false);
     const [newAccount, setNewAccount] = useState({
-        platform: 'baekjoon',
+        platform: 'leetcode',
         platformId: '',
         url: ''
     });
 
     const generateUrl = (platform, id) => {
         switch (platform) {
-            case 'baekjoon':
+            case 'acmicpc':
                 return `https://www.acmicpc.net/user/${id}`;
             case 'programmers':
                 return `https://programmers.co.kr/pr/${id}`;
@@ -40,7 +40,7 @@ const ProfilePage = () => {
                 codingAccounts: [...user.codingAccounts, response.data]
             });
             setShowForm(false);
-            setNewAccount({ platform: 'baekjoon', platformId: '', url: '' });
+            setNewAccount({ platform: 'leetcode', platformId: '', url: '' });
         } catch (error) {
             console.error('Error adding coding account:', error);
             alert('Failed to add coding account');
@@ -108,7 +108,7 @@ const ProfilePage = () => {
                                         platform: e.target.value
                                     })}
                                 >
-                                    <option value="baekjoon">백준</option>
+                                    <option value="acmicpc">백준(acmicpc)</option>
                                     <option value="programmers">프로그래머스</option>
                                     <option value="leetcode">LeetCode</option>
                                 </Select>

@@ -26,7 +26,7 @@ ChartJS.register(
 );
 
 import { Container, Title, MenuGrid, MenuButton, ClickCount, WinnerDisplay, FoodImage, FoodName } from '../styles/LunchBattlePageStyles';
-const DEBOUNCE_RATE = 500;
+const DEBOUNCE_RATE = 100;
 const MAX_RECONNECT_ATTEMPTS = 5;
 const RECONNECT_DELAY = 3000;
 
